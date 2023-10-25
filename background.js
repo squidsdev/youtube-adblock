@@ -17,16 +17,16 @@ if (typeof browser === "undefined") {
 
 browser.webRequest.onBeforeSendHeaders.addListener(rewriteUserAgentHeaderBlocking, { urls: ["*://*.youtube.com/*"] }, ["blocking", "requestHeaders"]);
 
-chrome.webNavigation.onCompleted.addListener(function (details) {
+browser.webNavigation.onCompleted.addListener(function (details) {
   const mYouTubeIndexPattern = /^https:\/\/m\.youtube\.com(?:\/supported_browsers)?\/?(?:\?.*)?$/;
 
   if (mYouTubeIndexPattern.test(details.url)) {
-    chrome.tabs.update(details.tabId, { url: "https://www.youtube.com/?app=desktop" });
+    browser.tabs.update(details.tabId, { url: "https://www.youtube.com/?app=desktop" });
   }
   else if (details.url.startsWith("https://m.youtube.com/")) {
     const url = new URL(details.url);
     const params = new URLSearchParams(url.search);
     params.set("app", "desktop");
-    chrome.tabs.update(details.tabId, { url: `https://www.youtube.com/${url.pathname}?${params.toString()}` });
+    browser.tabs.update(details.tabId, { url: `https://www.youtube.com/${url.pathname}?${params.toString()}` });
   }
 });
